@@ -1,2 +1,99 @@
 .idea-card {
+    display: flex;
+    padding: 30px;
+    background: $white;
+    border-radius: 3px;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.15);
+
+    &__content {
+        flex: 1;
+        &__title {
+            margin: 0 0 10px;
+            font-size: 24px;
+            /* line-height: 1em;
+            height: 2em;
+            overflow: hidden;
+            text-overflow: ellipsis; */
+        }
+    
+        &__infos {
+            
+            > * {
+                display: inline-block;
+                height: 26px;
+                margin-right: 10px;
+            }
+    
+            &__author {
+                > * {
+                    margin-right: 10px;
+                }
+                :last-child {
+                    margin: 0;
+                }
+
+                &__type {
+                    padding: 2px 6px;
+                    border-radius: 2px;
+                    color: white;
+
+                    &--qg {
+                        background: $orange;
+                    }
+    
+                    &--adherent {
+                        background: $france;
+                    }
+    
+                    &--committee {
+                        background: $dark-blue;
+                    }
+                } 
+            }
+
+            &__contributors, &__comments {
+                &__icon {
+                    vertical-align: middle;
+                    margin-right: 5px;
+                }
+            }
+    
+            &__date, &__meta {
+                color: $grey;
+            }
+        }
+    
+        &__tags {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            > * {
+                display: inline-block;
+                margin-right: 6px;
+                padding: 3px;
+                border: 1px solid $light-ciel;
+                border-radius: 1px;
+                background-color: $light-ciel;
+                color: $blue;
+            }
+        }
+    }
+
+    &__container {
+        display: flex;
+        justify-content: center;
+        width: 120px;
+        padding: 0 25px;
+        &__icon {
+            width: 76px;
+            height: 76px;
+        }
+    }
+
+    /* Responsive */
+    @media #{$mobile} {
+        &__container {
+            display: none;
+        }
+    }
 }

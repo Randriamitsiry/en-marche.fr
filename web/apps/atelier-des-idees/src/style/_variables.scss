@@ -1,0 +1,28 @@
+// colors
+$white: #fff;
+$black: #000;
+$light-black: #444;
+$france: #4887f7;
+$dark-blue: #353edd;
+$blue: #0496ff;
+$light-blue: #d2ecff;
+$ciel: #94acd5;
+$light-ciel: #d2ecff;
+$light-grey: #b7c8db;
+$grey: #939393;
+$orange: #f8b402;
+
+// Breakpoints
+// Small devices (landscape phones, 576px and up)
+$width-sm: 576px;
+// Medium devices (tablets, 768px and up)
+$width-md: 768px;
+// Large devices (desktops, 992px and up)
+$width-lg: 992px;
+// Extra large devices (large desktops, 1200px and up)
+$width-xl: 1200px;
+
+// responsive mixins
+$mobile: '(max-width: #{$width-md - 1px})';
+$tablet: '(min-width: #{$width-md}) and (max-width: #{$width-lg - 1px})';
+$desktop: '(min-width: #{$width-lg})';

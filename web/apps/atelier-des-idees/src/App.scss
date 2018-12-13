@@ -31,5 +31,16 @@
   }
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// shared
+@import '../src/style/fonts';
+@import '../src/style/typographie';
+@import '../src/style/variables';
+
 // components
-@import '../src/components/IdeaCard/_style';
+@import '../src/components/IdeaCard/style';

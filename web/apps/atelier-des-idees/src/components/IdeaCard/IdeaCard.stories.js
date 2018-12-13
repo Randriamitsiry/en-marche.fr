@@ -5,11 +5,14 @@ import IdeaCard from '.';
 const props = {
     author: {
         name: 'Jean-Michel Français',
-        type: 'comity',
+        type: {
+            id: 'qg',
+            text: 'LaREM',
+        },
     },
     createdAt: new Date().toISOString(),
     nbComments: 122,
-    nbContributors: 6,
+    nbContributors: 4,
     description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed molestie sapien eu orci congue sollicitudin. Sed malesuada nisi sed diam tristique, ullamcorper fermentum massa euismod. Vivamus a augue vitae nibh scelerisque…',
     tags: ['education', 'civil-rights'],
