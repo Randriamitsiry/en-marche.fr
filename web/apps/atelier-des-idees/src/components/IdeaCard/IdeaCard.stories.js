@@ -10,6 +10,7 @@ const props = {
             text: 'LaREM',
         },
     },
+    thumbnail: '/assets/img/icn_76px_education.svg',
     createdAt: new Date().toISOString(),
     nbComments: 122,
     nbContributors: 4,

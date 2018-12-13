@@ -34,7 +34,7 @@ function IdeaCard(props) {
                 </ul>
             </div>
             <div className="idea-card__container">
-                <img className="idea-card__container__icon" src="/assets/img/icn_76px_education.svg"/>
+                <img className="idea-card__container__icon" src={props.thumbnail}/>
             </div>
         </div>
     );
@@ -53,6 +53,7 @@ IdeaCard.propTypes = {
             text: PropTypes.string.isRequired,
         }),
     }).isRequired,
+    thumbnail: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired, // ISO UTC
     description: PropTypes.string.isRequired,
     nbComments: PropTypes.number,
