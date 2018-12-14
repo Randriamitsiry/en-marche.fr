@@ -1,0 +1,62 @@
+.contributing-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px;
+    background: $white-smoke;
+
+    &__report {
+        cursor: pointer;
+        outline: none;
+        display: flex;
+        align-items: center;
+        margin-right: auto;
+        background: transparent;
+        border: none;
+        font-size: 14px;
+        color: $saphir;
+    }
+
+    &__remaining-days {
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        font-family: $font-gillsans;
+
+        &__icon {
+            margin-right: 5px;
+        }
+
+        &__text {
+            font-size: 16px;
+        }
+    }
+
+    &__link {
+        cursor: pointer;
+        outline: none;
+        height: 40px;
+        background: $white;
+        border: 1px solid $blue;
+        color: $blue;
+        font-family: $font-gillsans;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    /* Responsive */
+    @media #{$mobile} {
+        flex-direction: column;
+        justify-content: initial;
+        > * {
+            flex: 1;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        &__report {
+            display: flex;
+            align-items: center;
+            order: 1;
+            margin: 0;
+        }
+    }
+}

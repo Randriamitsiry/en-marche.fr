@@ -9,6 +9,7 @@
         flex: 1;
         &__title {
             margin: 0 0 10px;
+            font-family: $font-gillsans;
             font-size: 24px;
             /* line-height: 1em;
             height: 2em;
@@ -33,6 +34,7 @@
                 }
 
                 &__type {
+                    font-family: $font-gillsans;
                     padding: 2px 6px;
                     border-radius: 2px;
                     color: white;
@@ -52,6 +54,7 @@
             }
 
             &__contributors, &__comments {
+                font-weight: bold;
                 &__icon {
                     vertical-align: middle;
                     margin-right: 5px;
@@ -71,10 +74,10 @@
                 display: inline-block;
                 margin-right: 6px;
                 padding: 3px;
-                border: 1px solid $light-ciel;
+                border: 1px solid $light-sky;
                 border-radius: 1px;
-                background-color: $light-ciel;
-                color: $blue;
+                background-color: $light-sky;
+                color: $blue-sky;
             }
         }
     }

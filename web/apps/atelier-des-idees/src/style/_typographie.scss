@@ -1,5 +1,10 @@
-@import "./fonts";
+body {
+    font-family: $font-roboto;
+}
 
-$font-gillsans: 'Gillsans', 'Roboto', Helvetica, sans-serif;
-$font-roboto: 'Roboto', Helvetica, sans-serif;
+h1, h2, h3, h4, h5, h6 {
+    font-family: $font-gillsans;
+}
+
+
 
