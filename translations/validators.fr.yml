@@ -284,3 +284,8 @@ message.max_length: Le message doit contenir moins de {{ limit }} caractères.
 # Biography
 #
 executive_office_member.executive_officer.unique: Le membre {{ fullName }} est déjà délégué général.
+
+#
+# Idea
+#
+idea.invalid_theme: Pour publiée votre idée son thème devrait être rempli.

@@ -15,7 +15,7 @@ trait EntityNameSlugTrait
      *
      * @Algolia\Attribute
      *
-     * @SymfonySerializer\Groups({"idea_list_read", "vote_read"})
+     * @SymfonySerializer\Groups({"idea_list_read", "idea_write", "vote_read"})
      * @JMS\Groups({"public", "committee_read", "citizen_project_read"})
      */
     protected $name;

@@ -41,7 +41,6 @@ Feature:
                 "published_at": "2018-12-04T10:00:00+01:00",
                 "committee": null,
                 "status": "FINALIZED",
-                "with_committee": false,
                 "votes_count": {
                     "total": 0,
                     "important": 0,
@@ -102,7 +101,6 @@ Feature:
                     "slug": "en-marche-paris-8"
                 },
                 "status": "PENDING",
-                "with_committee": true,
                 "votes_count": {
                     "total": 15,
                     "important": "6",
@@ -163,7 +161,6 @@ Feature:
                     "slug": "en-marche-paris-8"
                 },
                 "status": "PENDING",
-                "with_committee": true,
                 "votes_count": {
                     "total": 15,
                     "important": "6",
@@ -225,7 +222,6 @@ Feature:
                     "slug": "en-marche-paris-8"
                 },
                 "status": "PENDING",
-                "with_committee": true,
                 "votes_count": {
                     "total": 15,
                     "important": "6",
@@ -291,7 +287,6 @@ Feature:
                     "slug": "en-marche-paris-8"
                 },
                 "status": "PENDING",
-                "with_committee": true,
                 "votes_count": {
                     "total": 15,
                     "important": "6",
@@ -323,7 +318,6 @@ Feature:
                 "published_at": "2018-12-04T10:00:00+01:00",
                 "committee": null,
                 "status": "FINALIZED",
-                "with_committee": false,
                 "votes_count": {
                     "total": 0,
                     "important": 0,
@@ -374,7 +368,6 @@ Feature:
                 "published_at": "2018-12-03T10:00:00+01:00",
                 "committee": null,
                 "status": "DRAFT",
-                "with_committee": false,
                 "votes_count": {
                     "important": "6",
                     "feasible": "4",
@@ -391,5 +384,92 @@ Feature:
                 "comments_count": 0
             }
         ]
+    }
+    """
+
+  Scenario: As a logged-in user I can add my idea only with a name
+    When I add "Content-Type" header equal to "application/json"
+    And I am logged as "martine.lindt@gmail.com"
+    And I send a "POST" request to "/api/ideas" with body:
+    """
+    {
+      "name": "Mon idée"
+    }
+    """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should be equal to:
+    """
+    {
+        "theme": null,
+        "category": null,
+        "needs": [],
+        "author": {
+            "first_name": "Martine",
+            "last_name": "Lindt"
+        },
+        "published_at": null,
+        "committee": null,
+        "status": "DRAFT",
+        "votes_count": {
+            "important": 0,
+            "feasible": 0,
+            "innovative": 0,
+            "total": 0,
+            "my_votes": []
+        },
+        "author_category": "ADHERENT",
+        "description": null,
+        "created_at": "@string@.isDateTime()",
+        "name": "Mon idée",
+        "slug": "mon-idee",
+        "days_before_deadline": 20,
+        "contributors_count": 0,
+        "comments_count": 0
+    }
+    """
+
+  @rol
+  Scenario: As a logged-in user I can add my idea with all datas
+    Given the following fixtures are loaded:
+      | LoadAdherentData      |
+      | LoadIdeaQuestionData  |
+      | LoadIdeaCategoryData  |
+      | LoadIdeaNeedData      |
+      | LoadIdeaThemeData     |
+      | LoadIdeaData          |
+      | LoadIdeaVoteData      |
+    When I add "Content-Type" header equal to "application/json"
+    And I am logged as "jacques.picard@en-marche.fr"
+    And I send a "PUT" request to "/api/ideas/1" with body:
+    """
+    {
+      "name": "Mon idée",
+      "description": "Mon idée",
+      "theme": 1,
+      "category": 1,
+      "committee": 1,
+      "needs": [1,2],
+      "answers":[
+        {
+          "question":1,
+          "content":"Réponsee à la question 1"
+        },
+        {
+          "question":2,
+          "content":"Réponsee à la question 2"
+        },
+        {
+          "question":3,
+          "content":"Réponsee à la question 3"
+        }
+      ]
+    }
+    """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should be equal to:
+    """
+    {
     }
     """

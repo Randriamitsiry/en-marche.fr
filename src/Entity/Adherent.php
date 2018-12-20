@@ -819,6 +819,13 @@ class Adherent implements UserInterface, UserEntityInterface, GeoPointInterface,
             && !empty($this->boardMember->getArea()) && !empty($this->boardMember->getRoles());
     }
 
+    public function isQGForIdeas(): bool
+    {
+        return array_filter($this->getTags(), function ($tag) {
+            return AdherentTagEnum::IDEAS === $tag;
+        });
+    }
+
     public function revokeBoardMember(): void
     {
         if (!$this->boardMember) {

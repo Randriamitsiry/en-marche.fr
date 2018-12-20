@@ -16,6 +16,7 @@ use AppBundle\Entity\VisibleStatusesInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation as SymfonySerializer;
@@ -24,10 +25,21 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ApiResource(
- *     collectionOperations={"get": {"method": "GET"}},
- *     itemOperations={"get": {"method": "GET"}},
+ *     collectionOperations={
+ *         "get": {"method": "GET"},
+ *         "post": {
+ *             "access_control": "is_granted('ROLE_ADHERENT')",
+ *         }
+ *     },
+ *     itemOperations={
+ *         "get": {"method": "GET"},
+ *         "put": {"access_control": "object.getAdherent() == user"}
+ *     },
  *     attributes={
  *         "normalization_context": {"groups": {"idea_list_read"}},
+ *         "denormalization_context": {
+ *             "groups": {"idea_write"}
+ *         },
  *         "order": {"createdAt": "ASC"}
  *     }
  * )
@@ -65,26 +77,31 @@ class Idea implements AuthorInterface, VisibleStatusesInterface
     }
 
     /**
-     * @SymfonySerializer\Groups("idea_list_read")
+     * @SymfonySerializer\Groups({"idea_list_read", "idea_write"})
      * @ORM\ManyToOne(targetEntity="Theme")
+     *
+     * @Assert\Expression(
+     *     "not (constant('AppBundle\\Entity\\IdeasWorkshop\\IdeaStatusEnum::FINALIZED') == this.getStatus() and this.getTheme() == null)",
+     *     message="If third = 'b', second should be not null"
+     * )
      */
     private $theme;
 
     /**
-     * @SymfonySerializer\Groups("idea_list_read")
+     * @SymfonySerializer\Groups({"idea_list_read", "idea_write"})
      * @ORM\ManyToOne(targetEntity="Category")
      */
     private $category;
 
     /**
-     * @SymfonySerializer\Groups("idea_list_read")
+     * @SymfonySerializer\Groups({"idea_list_read", "idea_write"})
      * @ORM\ManyToMany(targetEntity="Need")
      * @ORM\JoinTable(name="ideas_workshop_ideas_needs")
      */
     private $needs;
 
     /**
-     * @SymfonySerializer\Groups("idea_list_read")
+     * @SymfonySerializer\Groups({"idea_list_read", "idea_write"})
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Adherent", inversedBy="ideas")
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
@@ -93,7 +110,7 @@ class Idea implements AuthorInterface, VisibleStatusesInterface
     /**
      * @var \DateTime
      *
-     * @SymfonySerializer\Groups("idea_list_read")
+     * @SymfonySerializer\Groups({"idea_list_read", "idea_write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $publishedAt;
@@ -101,7 +118,7 @@ class Idea implements AuthorInterface, VisibleStatusesInterface
     /**
      * @var Committee
      *
-     * @SymfonySerializer\Groups("idea_list_read")
+     * @SymfonySerializer\Groups({"idea_list_read", "idea_write"})
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Committee")
      */
     private $committee;
@@ -112,21 +129,14 @@ class Idea implements AuthorInterface, VisibleStatusesInterface
      *     strict=true,
      * )
      *
-     * @SymfonySerializer\Groups("idea_list_read")
+     * @SymfonySerializer\Groups({"idea_list_read", "idea_write"})
      * @ORM\Column(length=11, options={"default": IdeaStatusEnum::DRAFT})
      */
     private $status;
 
     /**
-     * @var bool
-     *
-     * @SymfonySerializer\Groups("idea_list_read")
-     * @ORM\Column(type="boolean", options={"default": 0})
-     */
-    private $withCommittee;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Answer", mappedBy="idea")
+     * @SymfonySerializer\Groups("idea_write")
+     * @ORM\OneToMany(targetEntity="Answer", mappedBy="idea", cascade={"all"})
      */
     private $answers;
 
@@ -149,48 +159,46 @@ class Idea implements AuthorInterface, VisibleStatusesInterface
      *     strict=true,
      * )
      *
-     * @SymfonySerializer\Groups("idea_list_read")
+     * @SymfonySerializer\Groups({"idea_list_read", "idea_write"})
      * @ORM\Column(length=9)
      */
     private $authorCategory;
 
     /**
-     * @SymfonySerializer\Groups("idea_list_read")
-     * @ORM\Column(type="text")
+     * @SymfonySerializer\Groups({"idea_list_read", "idea_write"})
+     * @ORM\Column(type="text", nullable=true)
      */
     private $description;
 
     public function __construct(
-        UuidInterface $uuid,
         string $name,
-        string $description,
-        Adherent $author,
-        Category $category,
-        Theme $theme,
-        string $authorCategory,
-        bool $withCommittee = false,
+        string $description = null,
+        Category $category = null,
+        Theme $theme = null,
+        string $authorCategory = AuthorCategoryEnum::ADHERENT,
         Committee $committee = null,
         \DateTime $publishedAt = null,
-        string $status = IdeaStatusEnum::DRAFT
+        string $status = IdeaStatusEnum::DRAFT,
+        Adherent $author = null,
+        UuidInterface $uuid = null
     ) {
-        $this->uuid = $uuid;
+        $this->uuid = $uuid ?: Uuid::uuid4();
+        $this->author = $author;
         $this->setName($name);
         $this->description = $description;
-        $this->author = $author;
         $this->category = $category;
         $this->theme = $theme;
         $this->authorCategory = $authorCategory;
         $this->committee = $committee;
         $this->publishedAt = $publishedAt;
         $this->status = $status;
-        $this->withCommittee = $withCommittee;
         $this->needs = new ArrayCollection();
         $this->answers = new ArrayCollection();
         $this->votes = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
 
-    public function getTheme(): Theme
+    public function getTheme(): ?Theme
     {
         return $this->theme;
     }
@@ -200,7 +208,7 @@ class Idea implements AuthorInterface, VisibleStatusesInterface
         $this->theme = $theme;
     }
 
-    public function getCategory(): Category
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
@@ -265,16 +273,6 @@ class Idea implements AuthorInterface, VisibleStatusesInterface
     public function setStatus(string $status): void
     {
         $this->status = $status;
-    }
-
-    public function isWithCommittee(): bool
-    {
-        return $this->withCommittee;
-    }
-
-    public function setWithCommittee(bool $withCommittee): void
-    {
-        $this->withCommittee = $withCommittee;
     }
 
     public function addAnswer(Answer $answer): void
@@ -375,7 +373,7 @@ class Idea implements AuthorInterface, VisibleStatusesInterface
         $this->votesCount -= $increment;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
