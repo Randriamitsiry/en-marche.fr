@@ -2,12 +2,16 @@
 
 namespace AppBundle\Repository;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 use AppBundle\Entity\Adherent;
 use AppBundle\Entity\IdeasWorkshop\Idea;
 use AppBundle\Entity\IdeasWorkshop\ThreadCommentStatusEnum;
 use AppBundle\Entity\IdeasWorkshop\VoteTypeEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class IdeaRepository extends ServiceEntityRepository
 {
@@ -91,5 +95,33 @@ class IdeaRepository extends ServiceEntityRepository
         });
 
         return $votes;
+    }
+
+    public function getAdherentContributedIdeas(UserInterface $adherent, int $page, int $itemPerPage): Paginator
+    {
+        $firstResult = ($page - 1) * $itemPerPage;
+
+        $queryBuilder = $this
+            ->createQueryBuilder('idea')
+            ->distinct()
+            ->innerJoin('idea.votes', 'vote')
+            ->innerJoin('idea.answers', 'answer')
+            ->innerJoin('answer.threads', 'thread')
+            ->innerJoin('thread.comments', 'threadComment')
+            ->where('vote.author = :author')
+            ->orWhere('threadComment.author = :author')
+            ->setParameter('author', $adherent)
+        ;
+
+        $criteria = Criteria::create()
+            ->setFirstResult($firstResult)
+            ->setMaxResults($itemPerPage)
+        ;
+        $queryBuilder->addCriteria($criteria);
+
+        $doctrinePaginator = new DoctrinePaginator($queryBuilder);
+        $paginator = new Paginator($doctrinePaginator);
+
+        return $paginator;
     }
 }
