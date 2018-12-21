@@ -12,7 +12,7 @@ class IdeasController extends Controller
 {
     public function myIdeasContributedAction(IdeaRepository $ideaRepository, UserInterface $user, Request $request): Paginator
     {
-        $page = (int) $request->query->get('page', 1);
+        $page = $request->query->getInt('page', 1);
         $itemPerPage = $this->getParameter('api_platform.collection.pagination.items_per_page');
 
         return $ideaRepository->getAdherentContributedIdeas($user, $page, $itemPerPage);
