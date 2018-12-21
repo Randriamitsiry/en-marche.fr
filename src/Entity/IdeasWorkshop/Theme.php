@@ -65,11 +65,8 @@ class Theme implements EnabledInterface
      */
     private $enabled;
 
-    public function __construct(
-        string $name,
-        string $imageName = null,
-        bool $enabled = false
-    ) {
+    public function __construct(string $name, string $imageName = null, bool $enabled = false)
+    {
         $this->setName($name);
         $this->imageName = $imageName;
         $this->enabled = $enabled;

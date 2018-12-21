@@ -11,10 +11,8 @@ class ThemeNormalizer implements NormalizerInterface
     private $normalizer;
     private $urlGenerator;
 
-    public function __construct(
-        NormalizerInterface $normalizer,
-        UrlGeneratorInterface $urlGenerator
-    ) {
+    public function __construct(NormalizerInterface $normalizer, UrlGeneratorInterface $urlGenerator)
+    {
         $this->normalizer = $normalizer;
         $this->urlGenerator = $urlGenerator;
     }
